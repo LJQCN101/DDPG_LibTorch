@@ -1,5 +1,7 @@
 # DDPG_LibTorch
-An implementation of the DDPG Algorithm in LibTorch
+An implementation of the DDPG Algorithm in LibTorch 1.6
+
+[LibTorch](https://pytorch.org/cppdocs/installing.html)
 
 As environment I used OpenAi-Gym
 
@@ -7,6 +9,6 @@ As environment I used OpenAi-Gym
 
 and 
 
-[JSON for Modern C++](https://github.com/nlohmann/json)
+[boost](https://www.boost.org/)
 
 I could successfully solve the Pendulum environment.
