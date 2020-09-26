@@ -47,7 +47,8 @@ device(torch::kCPU)
     critic_local->to(device);
     critic_target->to(device);
 
-    critic_optimizer.options.weight_decay_ = WEIGHT_DECAY;
+    //critic_optimizer.options.weight_decay_ = WEIGHT_DECAY;
+    static_cast<torch::optim::AdamOptions &>(critic_optimizer.param_groups()[0].options()).weight_decay(WEIGHT_DECAY);
 
     hard_copy_weights(actor_target, actor_local);
     hard_copy_weights(critic_target, critic_local);
@@ -81,7 +82,7 @@ std::vector<float> Agent::act(std::vector<float> state, bool add_noise )
 
 void Agent::reset()
 {
-    noise.reset();
+    noise->reset();
 }
 
 void Agent::step(std::vector<float> state, std::vector<float> action, float reward, std::vector<float> next_state, bool done)
@@ -105,7 +106,7 @@ void Agent::learn(std::tuple<torch::Tensor, torch::Tensor, torch::Tensor, torch:
 //    Update policy and value parameters using given batch of experience tuples.
 //    Q_targets = r + γ * critic_target(next_state, actor_target(next_state))
 
-    auto& [state, action, reward, next_state, done] = experiences;
+    auto &[state, action, reward, next_state, done] = experiences;
 
 // ---------------------------- update critic ---------------------------- #
 
@@ -147,33 +148,24 @@ void Agent::soft_update(std::shared_ptr<torch::nn::Module> local, std::shared_pt
 
 void Agent::saveCheckPoints(int eps)
 {
-    std::string path = getExecutablePathCopy();
-    auto fileActor (path + "checkpoints/ckp_actor_agent" + std::to_string(numOfThisAgent) +"_" + std::to_string(eps) + ".pt");
-    auto fileCritic(path + "checkpoints/ckp_critic_agent"+ std::to_string(numOfThisAgent) +"_" + std::to_string(eps) + ".pt");
+    std::string path = getExecutablePath();
+    auto fileActor (path + "checkpoints\\ckp_actor_agent" + std::to_string(numOfThisAgent) +"_" + std::to_string(eps) + ".pt");
+    auto fileCritic(path + "checkpoints\\ckp_critic_agent"+ std::to_string(numOfThisAgent) +"_" + std::to_string(eps) + ".pt");
     torch::save(std::dynamic_pointer_cast<torch::nn::Module>(actor_local) , fileActor);
     torch::save(std::dynamic_pointer_cast<torch::nn::Module>(critic_local) , fileCritic);
 }
 
 void Agent::loadCheckPoints(int eps)
 {
-    std::string path = getExecutablePathCopy();
-    auto fileActor (path + "checkpoints/ckp_actor_agent" + std::to_string(numOfThisAgent) +"_" + std::to_string(eps) + ".pt");
-    auto fileCritic(path + "checkpoints/ckp_critic_agent"+ std::to_string(numOfThisAgent) +"_" + std::to_string(eps) + ".pt");
+    std::string path = getExecutablePath();
+    auto fileActor (path + "checkpoints\\ckp_actor_agent" + std::to_string(numOfThisAgent) +"_" + std::to_string(eps) + ".pt");
+    auto fileCritic(path + "checkpoints\\ckp_critic_agent"+ std::to_string(numOfThisAgent) +"_" + std::to_string(eps) + ".pt");
     torch::load(actor_local, fileActor);
     torch::load(critic_local, fileCritic);
 }
 
 std::string Agent::getExecutablePath() 
 {
-    char buff[PATH_MAX];
-    ssize_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
-    if (len != -1) {
-        buff[len] = '\0';
-        std::string path = std::string(buff);
-        std::size_t found = path.find_last_of("/");
-        path = path.substr(0,found)+"/";
-        return path;
-    }
-    std::cout << "Could not determine path of executable" << std::endl;
-    return "";
+    std::string path = std::string("D:\\libtorch\\");
+    return path;
 }

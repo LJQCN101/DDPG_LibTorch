@@ -9,13 +9,13 @@ public:
     void reset_parameters();
 
     torch::Tensor forward(torch::Tensor state);
-    torch::nn::BatchNormOptions bn_options(int64_t features);
+    torch::nn::BatchNorm2dOptions bn_options(int64_t features);
     std::pair<double,double> hidden_init(torch::nn::Linear& layer);
 
 
 private:
     torch::nn::Linear fc1{nullptr}, fc2{nullptr}, fc3{nullptr};
-    torch::nn::BatchNorm bn1{nullptr};
+    torch::nn::BatchNorm2d bn1{nullptr};
 };
 
 
@@ -33,7 +33,7 @@ public:
 
 private:
     torch::nn::Linear fcs1{nullptr}, fc2{nullptr}, fc3{nullptr};
-    torch::nn::BatchNorm bn1{nullptr};
+    torch::nn::BatchNorm2d bn1{nullptr};
 };
 
 #endif //PROJECT_DDPG_MODEL_H

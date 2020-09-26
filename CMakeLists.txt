@@ -6,10 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 # Find Qt5 to be able to link it
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC  ON)
-find_package(jsoncpp REQUIRED)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Wno-unknown-pragmas" )
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS} -Wall -Wextra -pedantic -Wno-unknown-pragmas" )
 
-find_package(${TORCH_DIR}/Torch REQUIRED)
+find_package(Torch REQUIRED)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
@@ -29,3 +28,11 @@ target_link_libraries(${PROJECT_NAME}
         ${TORCH_LIBRARIES}
         )
 
+if (MSVC)
+  file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
+  add_custom_command(TARGET ${APP_NAME}
+                     POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                     ${TORCH_DLLS}
+                     $<TARGET_FILE_DIR:${APP_NAME}>)
+endif (MSVC)

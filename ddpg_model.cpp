@@ -38,10 +38,10 @@ torch::Tensor Actor::forward(torch::Tensor x)
 
 }
 
-torch::nn::BatchNormOptions Actor::bn_options(int64_t features){
-    torch::nn::BatchNormOptions bn_options = torch::nn::BatchNormOptions(features);
-    bn_options.affine_ = true;
-    bn_options.stateful_ = true;
+torch::nn::BatchNorm2dOptions Actor::bn_options(int64_t features){
+    torch::nn::BatchNorm2dOptions bn_options = torch::nn::BatchNorm2dOptions(features);
+    bn_options.affine(true);
+    bn_options.track_running_stats(true);
     return bn_options;
 }
 
