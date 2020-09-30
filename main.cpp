@@ -8,6 +8,7 @@
 #include "ddpg_model.h"
 #include <torch/torch.h>
 #include "agent.h"
+#include "gym.h"
 
 std::string getTimeString(double remaining) {
     int hours = int(remaining / 3600);         // Round down
@@ -99,42 +100,45 @@ void train_environment(const boost::shared_ptr<Gym::Environment> env, Agent& age
 int main() {
     bool training = true;
 
-    try {
-        boost::shared_ptr<Gym::Client> client = Gym::client_create("127.0.0.1", 5000);
-        boost::shared_ptr<Gym::Environment> env = client->make("Pendulum-v0");
-        auto action_space = env->action_space();
-        auto observation_space = env->observation_space();
+    torch::Tensor tensor = torch::rand({ 2, 3 });
+    std::cout << tensor << std::endl;
 
-        // Get Action_Size
-        int action_size = 0;
-        if (env->action_space()->type == Gym::Space::SpaceType::DISCRETE) {
-            action_size = env->action_space()->discreet_n;
-        } else { // CONTINUOUS
-            action_size = env->action_space()->box_shape[0]; 
-        }
+    //try {
+    //    boost::shared_ptr<Gym::Client> client = Gym::client_create("127.0.0.1", 5000);
+    //    boost::shared_ptr<Gym::Environment> env = client->make("Pendulum-v0");
+    //    auto action_space = env->action_space();
+    //    auto observation_space = env->observation_space();
 
-        // Get State Size
-        int state_size = 0;
-        if (env->observation_space()->type == Gym::Space::SpaceType::DISCRETE) {
-            state_size = env->observation_space()->discreet_n;
-        } else { // CONTINUOUS
-            state_size = env->observation_space()->box_shape[0];
-        }
+    //    // Get Action_Size
+    //    int action_size = 0;
+    //    if (env->action_space()->type == Gym::Space::SpaceType::DISCRETE) {
+    //        action_size = env->action_space()->discreet_n;
+    //    } else { // CONTINUOUS
+    //        action_size = env->action_space()->box_shape[0]; 
+    //    }
 
-        auto agent = Agent(state_size , action_size, 2);
-        std::cout << "(main.cpp) state_size = " << state_size << std::endl;
-        std::cout << "(main.cpp) action_size = " << action_size << std::endl;
+    //    // Get State Size
+    //    int state_size = 0;
+    //    if (env->observation_space()->type == Gym::Space::SpaceType::DISCRETE) {
+    //        state_size = env->observation_space()->discreet_n;
+    //    } else { // CONTINUOUS
+    //        state_size = env->observation_space()->box_shape[0];
+    //    }
+
+    //    auto agent = Agent(state_size , action_size, 2);
+    //    std::cout << "(main.cpp) state_size = " << state_size << std::endl;
+    //    std::cout << "(main.cpp) action_size = " << action_size << std::endl;
 
 
-        if (training)
-            train_environment(env, agent, /*render*/ false, 10000);
-        else
-            test_environment(env, agent, 100);
+    //    if (training)
+    //        train_environment(env, agent, /*render*/ false, 10000);
+    //    else
+    //        test_environment(env, agent, 100);
 
-    } catch (const std::exception& e) {
-        fprintf(stderr, "ERROR: %s\n", e.what());
-        return 1;
-    }
+    //} catch (const std::exception& e) {
+    //    fprintf(stderr, "ERROR: %s\n", e.what());
+    //    return 1;
+    //}
 
     return 0;
 
